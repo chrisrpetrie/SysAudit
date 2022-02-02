@@ -5,7 +5,7 @@ The tool can be run from a USB stick or alternatively from a network share.
 The resulting output will be stored in the OUTPUT directory.  
 
 ## Usage
-1. Clone https://github.com/chrisrpetrie/SysAudit.git
+1. Clone https://github.com/chrisrpetrie/SysAudit.git (Ensure you have the exe\LGPO.exe for the local policy export)
 2. On the computer to be audited, run the SysAudit.exe file. (Requires Administrator rights to run.)
 
 ### Results
