@@ -1,6 +1,7 @@
 # SysAudit
 A tool written in PowerShell for auditing Windows configurations and security settings.  
-Main purpose is for local computer audits where there is little or no network connectivity.  
+Main purpose is for local computer audits where there is little or no network connectivity. 
+The tool will output a wealth of information that can be later analyzed.
 The tool can be run from a USB stick or alternatively from a network share.  
 The resulting output will be stored in the OUTPUT directory.  
 
