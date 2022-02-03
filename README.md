@@ -3,7 +3,8 @@ A tool written in PowerShell for auditing Windows configurations and security se
 Main purpose is for local computer audits where there is little or no network connectivity. 
 The tool will output a wealth of information that can be later analyzed.
 The tool can be run from a USB stick or alternatively from a network share.  
-The resulting output will be stored in the OUTPUT directory.  
+The resulting output will be stored in the OUTPUT directory.
+https://chrisrpetrie.medium.com/sysaudit-windows-security-audit-tool-3b30b20e512e
 
 ## Usage
 1. Clone https://github.com/chrisrpetrie/SysAudit.git (Ensure you have the exe\LGPO.exe for the local policy export)
