@@ -259,7 +259,7 @@ $Firewall
 $WindowsPatches
 $EventLogs
 $ScheduledTasks
-$RemoveableStorageDenied
+$RemovableStorageDenied
 
 " -Head $header -Title "Computer Information Report" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p>"
 
