@@ -5,10 +5,10 @@
   Queries local system for inventory and configuration information. Outputs to HTML file + other formats in an OUTPUT directory.
   Tested on Windows 10
 .NOTES
-  Version:        0.1
+  Version:        0.2
   Author:         Chris R Petrie (https://github.com/chrisrpetrie)
   Creation Date:  2 Feb 2022
-  Purpose/Change: Initial build
+  Purpose/Change: Added USB checks
   
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
@@ -214,6 +214,9 @@ $EventLogs = Get-EventLog -list | ConvertTo-Html -Fragment -PreContent "<h2>Even
 #Display Scheduled Tasks
 $ScheduledTasks =  Get-ScheduledTask | where {$_.TaskPath -notlike "\Microsoft*"} | ConvertTo-Html -Property TaskPath, TaskName, State, URI, Description, Author -Fragment -PreContent "<h2>Scheduled Tasks</h2><p>Displays non-Microsoft tasks</p>"
 
+#Display Removable Storage status
+$RemovableStorageDenied = Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\RemovableStorageDevices" -Name "Deny_All" -ErrorAction SilentlyContinue | select pspath,Deny_All | ConvertTo-Html -Fragment -PreContent "<h2>Removable Storage status</h2>"
+
 #The command below will combine all the information gathered into a single HTML report
 $InventoryReport = ConvertTo-HTML -Body "
 $ComputerName
@@ -256,6 +259,7 @@ $Firewall
 $WindowsPatches
 $EventLogs
 $ScheduledTasks
+$RemoveableStorageDenied
 
 " -Head $header -Title "Computer Information Report" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p>"
 
