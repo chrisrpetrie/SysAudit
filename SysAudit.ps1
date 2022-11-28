@@ -5,10 +5,10 @@
   Queries local system for inventory and configuration information. Outputs to HTML file + other formats in an OUTPUT directory.
   Tested on Windows 10
 .NOTES
-  Version:        0.2
+  Version:        0.3
   Author:         Chris R Petrie (https://github.com/chrisrpetrie)
-  Creation Date:  2 Feb 2022
-  Purpose/Change: Added USB checks
+  Creation Date:  28 Nov 2022
+  Purpose/Change: Added extra UAC checks
   
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
@@ -97,9 +97,10 @@ $header = @"
             
             Write-Warning  "[i] Some of the operations need administrative privileges.`n"
             
-            Write-Warning  "[!] Please run using administrative rights (Run as Administrator).`n"
+            Write-Warning  "[!] Please run using administrative rights (Run as Administrator). Exiting... `n"
+
+            Start-Sleep -Seconds 5
                         
-            pause
             exit
     }
 
@@ -110,16 +111,16 @@ $ComputerName = "<h1>Computer name: $env:computername</h1>"
 $ComputerSystem = Get-CimInstance -Class Win32_ComputerSystem | ConvertTo-Html -As List -Property * -Fragment -PreContent "<h2>Computer Information</h2>"
 
 #Display OS Info
-$OSinfo = Get-CimInstance -Class Win32_OperatingSystem | ConvertTo-Html -As List -Property Version,Caption,BuildNumber,Manufacturer,OSArchitecture,OSLanguage -Fragment -PreContent "<h2>Operating System Information</h2>"
+$OSinfo = Get-CimInstance -Class Win32_OperatingSystem | ConvertTo-Html -Property Version,Caption,BuildNumber,Manufacturer,OSArchitecture,OSLanguage -Fragment -PreContent "<h2>Operating System Information</h2>"
 
 #Display Processesor Info
-$ProcessInfo = Get-CimInstance -ClassName Win32_Processor | ConvertTo-Html -As List -Property DeviceID,Name,Caption,MaxClockSpeed,SocketDesignation,Manufacturer -Fragment -PreContent "<h2>Processor Information</h2>"
+$ProcessInfo = Get-CimInstance -ClassName Win32_Processor | ConvertTo-Html -Property DeviceID,Name,Caption,MaxClockSpeed,SocketDesignation,Manufacturer -Fragment -PreContent "<h2>Processor Information</h2>"
 
 #Display BIOS Info
-$BiosInfo = Get-CimInstance -ClassName Win32_BIOS | ConvertTo-Html -As List -Property SMBIOSBIOSVersion,Manufacturer,Name,SerialNumber -Fragment -PreContent "<h2>BIOS Information</h2>"
+$BiosInfo = Get-CimInstance -ClassName Win32_BIOS | ConvertTo-Html -Property SMBIOSBIOSVersion,Manufacturer,Name,SerialNumber -Fragment -PreContent "<h2>BIOS Information</h2>"
 
 #Display Disk Info
-$DiscInfo = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DriveType=3" | ConvertTo-Html -As List -Property DeviceID,DriveType,ProviderName,VolumeName,Size,FreeSpace -Fragment -PreContent "<h2>Disk Information</h2>"
+$DiscInfo = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DriveType=3" | ConvertTo-Html -Property DeviceID,DriveType,ProviderName,VolumeName,Size,FreeSpace -Fragment -PreContent "<h2>Disk Information</h2>"
 
 #Display Network Adapters
 $Network = Get-NetAdapter | ConvertTo-Html -Property MacAddress , Status , LinkSpeed, PhysicalMediaType, AdminStatus, ifAlias -Fragment -PreContent "<h2>Network Adapters</h2>"
@@ -164,8 +165,8 @@ $GroupUsers = Get-LocalGroupMember -group "Users" -ErrorAction SilentlyContinue 
 #Display RDP Group members
 $GroupRDP = Get-LocalGroupMember -group "Remote Desktop Users" -ErrorAction SilentlyContinue | ConvertTo-Html -property Name, Description -Fragment -PreContent "<h2>Group Members - Remote Desktop</h2>"
 
-#Display UAC Status
-$UAC = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -ErrorAction SilentlyContinue | ConvertTo-Html -Property EnableLUA -Fragment -PreContent "<h2>UAC Status</h2><p>0 = Windows does not notify the user when programs try to install software or make changes to the computer.<br>1 = Windows notifies the user when programs try to make changes to the computer.</p>"
+#Display UAC settings
+$UAC = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -ErrorAction SilentlyContinue | ConvertTo-Html -Property FilterAdministratorToken,ConsentPromptBehaviorAdmin,ConsentPromptBehaviorUser,EnableInstallerDetection,EnableSecureUIAPaths,EnableLUA,PromptOnSecureDesktop,EnableVirtualization -Fragment -PreContent "<h2>UAC Status</h2>"
 
 #Display Startup Programs
 $Startup = Get-CimInstance Win32_StartupCommand | ConvertTo-Html -Property Name, Command, Location, User -Fragment -PreContent "<h2>Startup Programs</h2>"
