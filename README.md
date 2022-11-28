@@ -26,3 +26,6 @@ The results will be available at the locations below:
       - Machine.txt <- Parsed local group policy files  
       - User.txt <- Parsed local group policy files  
   
+###To compile the EXE use the PS2EXE module in Powershell:
+1. Install-Module -Name ps2exe 
+2. Invoke-PS2EXE .\SysAudit.ps1 .\SysAudit.exe -version 0.3 -title "System Audit Tool" -requireAdmin
