@@ -4,12 +4,15 @@
 .DESCRIPTION
   Queries local system for inventory and configuration information. Outputs to HTML file + other formats in an OUTPUT directory.
   Tested on Windows 10
-.NOTES
+.AUTHOR
+  Chris R Petrie (https://github.com/chrisrpetrie)
+.REVISION HISTORY
+  Version:        0.4
+    Date:  02 Dec 2022
+    Purpose/Change: Now Exports Windows Defender Logs
   Version:        0.3
-  Author:         Chris R Petrie (https://github.com/chrisrpetrie)
-  Creation Date:  28 Nov 2022
-  Purpose/Change: Added extra UAC checks
-  
+    Date:  28 Nov 2022
+    Purpose/Change: Added extra UAC checks
 .EXAMPLE
   <Example goes here. Repeat this attribute for more than one example>
 #>
@@ -307,6 +310,7 @@ If(!(test-path $path1\$path2\EventLogs))
 wevtutil epl Application $path1\$path2\EventLogs\Application.evtx /ow
 wevtutil epl Security $path1\$path2\EventLogs\Security.evtx /ow
 wevtutil epl System $path1\$path2\EventLogs\System.evtx /ow
+wevtutil epl "Microsoft-Windows-Windows Defender/Operational" $path1\$path2\EventLogs\WindowsDefender.evtx /ow
 
     Write-Host "[i] Complete - Exiting ..`n" 
 
