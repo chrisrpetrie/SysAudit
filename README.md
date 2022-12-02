@@ -22,6 +22,7 @@ The results will be available at the locations below:
       - Application.evtx  
       - Security.evtx  
       - System.evtx  
+      - WindowsDefender.evtx  
     - GROUPPOLICY\
       - Machine.txt <- Parsed local group policy files  
       - User.txt <- Parsed local group policy files  
