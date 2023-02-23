@@ -7,6 +7,9 @@
 .AUTHOR
   Chris R Petrie (https://github.com/chrisrpetrie)
 .REVISION HISTORY
+  Version:        0.5
+    Date:  23 Feb 2023
+    Purpose/Change: Added PolicyAnalyzer and GPO2PolicyRules functionality
   Version:        0.4
     Date:  02 Dec 2022
     Purpose/Change: Now Exports Windows Defender Logs
@@ -286,16 +289,15 @@ $InventoryReport | Out-File $path1\$path2\$env:computername-$FileTimeStamp-Inven
 
 #Export Local Group Policy
 Write-Host "[i] Exporting Local Group Policy ..`n"
-If(!(test-path $path1\$path2\GroupPolicy))
+If(!(test-path $path1\$path2\Policies))
 {
-      New-Item -ItemType Directory -Force -Path $path1\$path2\GroupPolicy | Out-Null
+      New-Item -ItemType Directory -Force -Path $path1\$path2\Policies | Out-Null
 }
-Invoke-Expression -ErrorAction SilentlyContinue "./exe/lgpo.exe /q /parse /m C:\Windows\System32\GroupPolicy\Machine\Registry.pol > $path1\$path2\GroupPolicy\Machine.txt"
-Invoke-Expression -ErrorAction SilentlyContinue "./exe/lgpo.exe /q /parse /u C:\Windows\System32\GroupPolicy\User\Registry.pol > $path1\$path2\GroupPolicy\User.txt"
+Invoke-Expression -ErrorAction SilentlyContinue "./exe/GPO2PolicyRules.exe C:\Windows\System32\GroupPolicy $path1\$path2\Policies\$env:computername-$FileTimeStamp-GroupPolicy.PolicyRules" | Out-Null
 
 #Export Security Policy
 Write-Host "[i] Exporting Security Policy ..`n" 
-SecEdit.exe /export /cfg $path1\$path2\$env:computername-$FileTimeStamp-SecPol.cfg /quiet 
+Invoke-Expression -ErrorAction SilentlyContinue "SecEdit.exe /export /cfg $path1\$path2\Policies\$env:computername-$FileTimeStamp-SecurityPolicy.inf /quiet"
 
 #Export Scheduled Tasks
 Write-Host "[i] Exporting Scheduled Tasks ..`n"
