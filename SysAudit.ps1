@@ -94,6 +94,13 @@ $header = @"
 
 </style>
 "@
+    Write-Host "  _________               _____            .___.__  __   "
+    Write-Host " /   _____/__.__. ______ /  _  \  __ __  __| _/|__|/  |_ "
+    Write-Host " \_____  <   |  |/  ___//  /_\  \|  |  \/ __ | |  \   __\"
+    Write-Host " /        \___  |\___ \/    |    \  |  / /_/ | |  ||  |  "
+    Write-Host "/_______  / ____/____  >____|__  /____/\____ | |__||__|  "
+    Write-Host "        \/\/         \/        \/           \/           "
+    Write-Host ""
     Write-Host "[i] Running System Audit Tool ..`n"
     Write-Host "[i] This may take a few minutes ..`n" 
 
@@ -109,6 +116,8 @@ $header = @"
                         
             exit
     }
+
+Write-Host "[i] Gathering System Information ..`n" 
 
 #Display Computer Hostname
 $ComputerName = "<h1>Computer name: $env:computername</h1>"
@@ -147,7 +156,7 @@ $optionalfeatures = Get-WindowsOptionalFeature -Online | Where {$_.state -eq 'En
 $ServicesInfo = Get-CimInstance -ClassName Win32_Service  | Sort-Object -Property DisplayName | ConvertTo-Html -Property DisplayName,Name,State,StartMode,ProcessID,StartName,PathName,Description -Fragment -PreContent "<h2>Services Information</h2>"
 
 #Display Running Processes
-$RunningProcesses = Get-Process | ConvertTo-Html -Property name, ID, path -Fragment -PreContent "<h2>Running Processes</h2>"
+$RunningProcesses = Get-Process -ErrorAction SilentlyContinue | ConvertTo-Html -Property name, ID, path -Fragment -PreContent "<h2>Running Processes</h2>"
 
 #Display Remote Desktop settings
 $RDP = Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" | select PSPath,fdenytsconnections | ConvertTo-Html -Fragment -PreContent "<h3>Remote Desktop</h3><p>Enabled = 0<br>Disabled = 1</p>"
@@ -293,7 +302,7 @@ If(!(test-path $path1\$path2\Policies))
 {
       New-Item -ItemType Directory -Force -Path $path1\$path2\Policies | Out-Null
 }
-Invoke-Expression -ErrorAction SilentlyContinue "./exe/GPO2PolicyRules.exe C:\Windows\System32\GroupPolicy $path1\$path2\Policies\$env:computername-$FileTimeStamp-GroupPolicy.PolicyRules" | Out-Null
+Start-Process -filepath "exe/GPO2PolicyRules.exe" -ArgumentList "C:\Windows\System32\GroupPolicy $path1\$path2\Policies\$env:computername-$FileTimeStamp-GroupPolicy.PolicyRules"
 
 #Export Security Policy
 Write-Host "[i] Exporting Security Policy ..`n" 
