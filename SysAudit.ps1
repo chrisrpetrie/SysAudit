@@ -7,6 +7,9 @@
 .AUTHOR
   Chris R Petrie (https://github.com/chrisrpetrie)
 .REVISION HISTORY
+  Version:        0.6
+    Date:  08 Mar 2023
+    Purpose/Change: Now exports gpresult, LGPO backups, and arp -a output.
   Version:        0.5
     Date:  23 Feb 2023
     Purpose/Change: Added PolicyAnalyzer and GPO2PolicyRules functionality
@@ -279,6 +282,9 @@ $RemovableStorageDenied
 
 " -Head $header -Title "Computer Information Report" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p>"
 
+#Set current director as variable
+$currentdir = Get-Location
+
 #Check if directories exist and create if missing
 $path1 = "OUTPUT"
 If(!(test-path $path1))
@@ -296,17 +302,37 @@ Write-Host "[i] Exporting HTML Audit Report ..`n"
 $FileTimeStamp = get-date -format yyyyMMddhhmmss
 $InventoryReport | Out-File $path1\$path2\$env:computername-$FileTimeStamp-Inventory.html
 
-#Export Local Group Policy
-Write-Host "[i] Exporting Local Group Policy ..`n"
+#Export Local Group Policy (policyrules)
+Write-Host "[i] Exporting Local Group Policy (policyrules) ..`n"
 If(!(test-path $path1\$path2\Policies))
 {
       New-Item -ItemType Directory -Force -Path $path1\$path2\Policies | Out-Null
 }
 Start-Process -filepath "exe/GPO2PolicyRules.exe" -ArgumentList "C:\Windows\System32\GroupPolicy $path1\$path2\Policies\$env:computername-$FileTimeStamp-GroupPolicy.PolicyRules"
 
+#Export Local Group Policy Backup
+Write-Host "[i] Exporting Local Group Policy Backup ..`n"
+If(!(test-path $path1\$path2\Policies))
+{
+      New-Item -ItemType Directory -Force -Path $path1\$path2\Policies | Out-Null
+}
+Invoke-Expression -ErrorAction SilentlyContinue "exe/LGPO.exe /b '$currentdir\$path1\$path2\Policies'" 2> $null
+
+#Export Resultant Set of Policy (RSoP) information
+Write-Host "[i] Resultant Set of Policy (RSoP) information ..`n"
+If(!(test-path $path1\$path2\Policies))
+{
+      New-Item -ItemType Directory -Force -Path $path1\$path2\Policies | Out-Null
+}
+Invoke-Expression -ErrorAction SilentlyContinue "gpresult.exe /H '$currentdir\$path1\$path2\Policies\$env:computername-$FileTimeStamp-GPResult.html'"
+
 #Export Security Policy
 Write-Host "[i] Exporting Security Policy ..`n" 
 Invoke-Expression -ErrorAction SilentlyContinue "SecEdit.exe /export /cfg $path1\$path2\Policies\$env:computername-$FileTimeStamp-SecurityPolicy.inf /quiet"
+
+#Export ARP information
+Write-Host "[i] Exporting ARP information ..`n" 
+Invoke-Expression -ErrorAction SilentlyContinue "arp -a > $path1\$path2\$env:computername-$FileTimeStamp-arp.txt"
 
 #Export Scheduled Tasks
 Write-Host "[i] Exporting Scheduled Tasks ..`n"
