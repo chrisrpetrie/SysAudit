@@ -4,10 +4,10 @@ Its main purpose is for local computer security audits on standalone or air gapp
 The tool will output information that can be later analyzed.
 The tool can be run from a USB stick or from a network share.  
 The resulting output will be stored in the OUTPUT directory.  
-Read more here https://chrisrpetrie.medium.com/sysaudit-windows-security-audit-tool-3b30b20e512e
 
 ## Usage
 1. Place the SysAudit directory and all subfolders, files on a USB stick or a network share.
+	Note that you may need to go to the exe properties and select "Unblock" if you get a Smartscreen warning.
 2. On the computer to be audited, run the SysAudit.exe file. (Requires Administrator rights to run.)
 	Note: Defender or Smartscreen warning may appear, or require a scan, accept those to continue - the script is non malicious using Microsoft utilities and PowerShell cmdlets.
 3. The results will be available in the OUTPUT folder.
