@@ -8,10 +8,10 @@ The resulting output will be stored in the OUTPUT directory.
 ## Usage
 1. Place the SysAudit directory and all subfolders, files on a USB stick or a network share.
 	Note that you may need to go to the file properties and select "Unblock" if you get a Smartscreen warning.
-2. On the computer to be audited, run the SysAudit.ps1 file. (Requires Administrator rights to run.)
-   	- Run Powershell as Administrator
-   	- Navigate to the directory containing the script, and type the command .\SysAudit.ps1
-   	- The SysAudit script will run	
+2. On the computer to be audited, run the SysAudit.ps1 script:
+   	a. Run Powershell as Administrator.
+   	b. Navigate to the directory containing the script, and type the command .\SysAudit.ps1
+   	c. The SysAudit script will run.
 4. The results will be available in the OUTPUT folder.
 
 Note: Defender or Smartscreen warnings may appear, or require a scan, accept those to continue - the script is non malicious using Microsoft utilities and PowerShell cmdlets.
