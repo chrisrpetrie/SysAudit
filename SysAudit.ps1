@@ -7,6 +7,9 @@
 .AUTHOR
   Chris R Petrie (https://github.com/chrisrpetrie)
 .REVISION HISTORY
+  Version:        0.7
+    Date:  07 Oct 2024
+    Purpose/Change: Formatting changes. Added Logo.
   Version:        0.6
     Date:  08 Mar 2023
     Purpose/Change: Now exports gpresult, LGPO backups, and arp -a output.
@@ -27,10 +30,19 @@
 $header = @"
 <style>
 
+    h0 {
+
+        font-family: Arial, Helvetica, sans-serif;
+        color: #000000;
+        font-size: 24px;
+
+    }
+    
+
     h1 {
 
         font-family: Arial, Helvetica, sans-serif;
-        color: #000099;
+        color: #000000;
         font-size: 14px;
 
     }
@@ -39,7 +51,7 @@ $header = @"
     h2 {
 
         font-family: Arial, Helvetica, sans-serif;
-        color: #000099;
+        color: #000000;
         font-size: 11px;
 
     }
@@ -47,7 +59,7 @@ $header = @"
     h3 {
 
         font-family: Arial, Helvetica, sans-serif;
-        color: #000099;
+        color: #000000;
         font-size: 10px;
 
     }
@@ -90,7 +102,7 @@ $header = @"
     #CreationDate {
 
         font-family: Arial, Helvetica, sans-serif;
-        color: #ff3300;
+        color: #000000;
         font-size: 9px;
 
     }
@@ -122,8 +134,12 @@ $header = @"
 
 Write-Host "[i] Gathering System Information ..`n" 
 
+$Logo = "<img src='../../exe/Logo.png'><p><p>"
+
+$SystemAuditInventoryReport = "<h0>System Audit Inventory Report</h0>"
+
 #Display Computer Hostname
-$ComputerName = "<h1>Computer name: $env:computername</h1>"
+$ComputerName = "<h1>Hostname: $env:computername</h1><p>"
 
 #Display general computer information
 $ComputerSystem = Get-CimInstance -Class Win32_ComputerSystem | ConvertTo-Html -As List -Property * -Fragment -PreContent "<h2>Computer Information</h2>"
@@ -146,9 +162,6 @@ $Network = Get-NetAdapter | ConvertTo-Html -Property MacAddress , Status , LinkS
 #Display IP Addressing
 $IpAddress = Get-NetIPAddress | ConvertTo-Html -Property INTERFACEALIAS, INTERFACEINDEX, IPADDRESS, PREFIXLENGTH -Fragment -PreContent "<h2>IP Addresses</h2>"
 
-#Display IP Configuration
-$IPConfiguration = Get-NetIPConfiguration -Detailed | ConvertTo-Html -Fragment -PreContent "<h2>IP Configuration</h2>"
-
 #Display Software Inventory 
 $Software = Get-CimInstance -Class Win32_Product | Sort-Object -Property Name | ConvertTo-Html -Property Name , Vendor , Version , Caption, InstallDate, InstallLocation -Fragment -PreContent "<h2>Installed Software</h2>"
 
@@ -162,8 +175,8 @@ $ServicesInfo = Get-CimInstance -ClassName Win32_Service  | Sort-Object -Propert
 $RunningProcesses = Get-Process -ErrorAction SilentlyContinue | ConvertTo-Html -Property name, ID, path -Fragment -PreContent "<h2>Running Processes</h2>"
 
 #Display Remote Desktop settings
-$RDP = Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" | select PSPath,fdenytsconnections | ConvertTo-Html -Fragment -PreContent "<h3>Remote Desktop</h3><p>Enabled = 0<br>Disabled = 1</p>"
-$RDPNLA = Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\" -Name "SecurityLayer" | select PSPath,SecurityLayer | ConvertTo-Html -Fragment -PreContent "<h3>Remote Desktop with NLA</h3><p>0 = Specifies that the Microsoft Remote Desktop Protocol (RDP) is used by the server and the client for authentication before a remote desktop connection is established.<br>1 = Specifies that the server and the client negotiate the method for authentication before a remote desktop connection is established. (Default)<br>2 = Specifies that the Transport Layer Security (TLS) protocol is used by the server and the client for authentication before a remote desktop connection is established.</p>"
+$RDP = Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" | select PSPath,fdenytsconnections | ConvertTo-Html -Fragment -PreContent "<h2>Remote Desktop</h2><p>Enabled = 0<br>Disabled = 1</p>"
+$RDPNLA = Get-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\" -Name "SecurityLayer" | select PSPath,SecurityLayer | ConvertTo-Html -Fragment -PreContent "<h2>Remote Desktop with NLA</h2><p>0 = Specifies that the Microsoft Remote Desktop Protocol (RDP) is used by the server and the client for authentication before a remote desktop connection is established.<br>1 = Specifies that the server and the client negotiate the method for authentication before a remote desktop connection is established. (Default)<br>2 = Specifies that the Transport Layer Security (TLS) protocol is used by the server and the client for authentication before a remote desktop connection is established.</p>"
 
 #Display AntiVirus Products
 $AntiVirus = get-ciminstance -namespace root/securitycenter2 -classname antivirusproduct | ConvertTo-Html -Fragment -PreContent "<h2>AntiVirus</h2>"
@@ -222,7 +235,7 @@ $NTP = Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\P
 $NETSTAT = Get-NetTCPConnection | select LocalAddress, LocalPort, RemoteAddress, RemotePort, State, OwningProcess, @{Name="Process";Expression={(Get-Process -Id $_.OwningProcess).ProcessName}} | ConvertTo-Html -Fragment -PreContent "<h2>TCP Connections</h2>"
 
 #Firewall status
-$Firewall = Get-NetFirewallProfile | ConvertTo-Html -Property Name, Enabled -Fragment -PreContent "<h2>Firewall Status</h2>"
+$Firewall = Get-NetFirewallProfile | ConvertTo-Html -Property Name, Enabled, DefaultInboundAction, DefaultOutboundAction, AllowInboundRules, AllowLocalFirewallRules, AllowLocalIPsecRules, AllowUserApps, AllowUserPorts, LogFileName, LogMaxSizeKilobytes, LogAllowed, LogBlocked, LogIgnored -Fragment -PreContent "<h2>Firewall Status</h2>"
 
 #Installed Updates
 $WindowsPatches = Get-HotFix | sort-object hotfixid | ConvertTo-Html -Property HotFixID, InstalledOn, Description, Caption, InstalledBy -Fragment -PreContent "<h2>Installed Updates</h2>"
@@ -238,6 +251,8 @@ $RemovableStorageDenied = Get-ItemProperty -Path "HKLM:\Software\Policies\Micros
 
 #The command below will combine all the information gathered into a single HTML report
 $InventoryReport = ConvertTo-HTML -Body "
+$Logo
+$SystemAuditInventoryReport
 $ComputerName
 $ComputerSystem
 $OSinfo 
@@ -246,7 +261,6 @@ $BiosInfo
 $DiscInfo 
 $Network
 $IpAddress
-$IPConfiguration
 $Software
 $optionalfeatures
 $ServicesInfo
@@ -280,7 +294,7 @@ $EventLogs
 $ScheduledTasks
 $RemovableStorageDenied
 
-" -Head $header -Title "Computer Information Report" -PostContent "<p id='CreationDate'>Creation Date: $(Get-Date)</p>"
+" -Head $header -Title "Computer Information Report" -PostContent "<p id='CreationDate'>Scan time: $(Get-Date)</p>"
 
 #Set current director as variable
 $currentdir = Get-Location
